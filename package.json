@@ -1,0 +1,58 @@
+{
+  "name": "SPA-Template",
+  "version": "1.0.0",
+  "description": "Single Page Application Template with Mongo, Express, Sass, and Mocha. Front-end framework not included.",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha --require babel-polyfill --compilers js:babel-register",
+
+    "start": "npm run watch",
+    "serve:dev": "nodemon server.js --exec babel-node",
+    "serve:prod": "node dist/server.js",
+      "preserve:prod": "npm run build",
+
+    "build": "npm run build:server && npm run build:script && npm run build:css && npm run copy",
+    "clean": "rimraf dist",
+      "postclean": "npm run mkdist",
+    "mkdist": "mkdirp dist/css && mkdirp dist/js && mkdirp dist/fonts && mkdirp dist/images && mkdirp dist/views",
+
+    "build:server": "babel server.js -o dist/server.js",
+    "build:script": "babel js -d dist/js",
+    "build:css": "node-sass --include-path scss scss/styles.scss dist/css/styles.css",
+      "postbuild:css": "npm run autoprefixer",
+      "autoprefixer": "postcss dist/css/styles.css -r --use autoprefixer",
+
+    "copy": "npm run copy:views && npm run copy:assets",
+      "copy:views": "babel views -d dist/views --copy-files",
+      "copy:assets": "npm run copy:fonts && npm run copy:images",
+        "copy:fonts": "babel public/fonts -d dist/fonts --copy-files",
+        "copy:images": "babel public/images -d dist/images --copy-files",
+
+    "watch": "concurrently --kill-others --prefix \"[WATCH:{name}]\" --names \"SERVER,SCRIPT,CSS   ,ASSETS\" \"npm run serve:dev\" \"npm run watch:script\" \"npm run watch:css\" \"npm run watch:assets\"",
+      "watch:script": "nodemon -w js -e js -x \"npm run build:script\"",
+      "watch:css": "nodemon -w scss -e scss -x \"npm run build:css\"",
+      "watch:assets": "nodemon -w public -e png,jpg,gif,svg,eot,woff,woff2,otf,ttf -x \"npm run copy:assets\""
+  },
+  "author": "Michael Liu",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^6.7.7",
+    "babel-cli": "^6.24.0",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.2.2",
+    "babel-register": "^6.24.0",
+    "concurrently": "^3.4.0",
+    "mkdirp": "^0.5.1",
+    "mocha": "^3.2.0",
+    "node-sass": "^4.5.1",
+    "nodemon": "^1.11.0",
+    "postcss-cli": "^3.0.0",
+    "rimraf": "^2.6.1"
+  },
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "dotenv": "^4.0.0",
+    "express": "^4.15.2",
+    "mongoose": "^4.9.1"
+  }
+}
